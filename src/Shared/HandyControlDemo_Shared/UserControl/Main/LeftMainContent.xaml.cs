@@ -1,60 +1,120 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
+using System.Windows.Threading;
 using HandyControl.Data;
-using HandyControl.Tools.Extension;
+using HandyControl.Tools;
 using HandyControlDemo.Data;
+using HandyControlDemo.ViewModel;
 
+namespace HandyControlDemo.UserControl;
 
-namespace HandyControlDemo.UserControl
+/// <summary>
+///     左侧主内容
+/// </summary>
+public partial class LeftMainContent
 {
-    /// <summary>
-    ///     左侧主内容
-    /// </summary>
-    public partial class LeftMainContent
-    {
-        public LeftMainContent()
-        {
-            InitializeComponent();
-        }
+    private string _searchKey;
 
-        private void TabControl_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    public LeftMainContent()
+    {
+        InitializeComponent();
+    }
+
+    private void TabControl_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (e.AddedItems.Count == 0) return;
+        if (e.AddedItems[0] is DemoInfoModel demoInfo)
         {
-            if (e.AddedItems.Count == 0) return;
-            if (e.AddedItems[0] is DemoInfoModel demoInfo)
+            ViewModelLocator.Instance.Main.DemoInfoCurrent = demoInfo;
+            var selectedIndex = demoInfo.SelectedIndex;
+            demoInfo.SelectedIndex = -1;
+            demoInfo.SelectedIndex = selectedIndex;
+
+            FilterItems();
+            GroupItems(sender as TabControl, demoInfo);
+        }
+    }
+
+    private void ButtonAscending_OnClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is ToggleButton button && button.Tag is ItemsControl itemsControl)
+        {
+            if (button.IsChecked == true)
             {
-                var selectedIndex = demoInfo.SelectedIndex;
-                demoInfo.SelectedIndex = -1;
-                demoInfo.SelectedIndex = selectedIndex;
+                itemsControl.Items.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+            }
+            else
+            {
+                itemsControl.Items.SortDescriptions.Clear();
             }
         }
+    }
 
-        private void ButtonAscending_OnClick(object sender, RoutedEventArgs e)
+    private void SearchBar_OnSearchStarted(object sender, FunctionEventArgs<string> e)
+    {
+        _searchKey = e.Info;
+        FilterItems();
+    }
+
+    private void FilterItems()
+    {
+        if (string.IsNullOrEmpty(_searchKey))
         {
-            if (sender is ToggleButton button && button.Tag is ItemsControl itemsControl)
+            foreach (var item in ViewModelLocator.Instance.Main.DemoInfoCurrent.DemoItemList)
             {
-                if (button.IsChecked == true)
+                item.IsVisible = true;
+                item.QueriesText = string.Empty;
+            }
+        }
+        else
+        {
+            var key = _searchKey.ToLower();
+            foreach (var item in ViewModelLocator.Instance.Main.DemoInfoCurrent.DemoItemList)
+            {
+                if (item.Name.ToLower().Contains(key))
                 {
-                    itemsControl.Items.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+                    item.IsVisible = true;
+                    item.QueriesText = _searchKey;
+                }
+                else if (item.TargetCtlName.Replace("DemoCtl", "").ToLower().Contains(key))
+                {
+                    item.IsVisible = true;
+                    item.QueriesText = _searchKey;
                 }
                 else
                 {
-                    itemsControl.Items.SortDescriptions.Clear();
+                    var name = Properties.Langs.LangProvider.GetLang(item.Name);
+                    if (!string.IsNullOrEmpty(name) && name.ToLower().Contains(key))
+                    {
+                        item.IsVisible = true;
+                        item.QueriesText = _searchKey;
+                    }
+                    else
+                    {
+                        item.IsVisible = false;
+                        item.QueriesText = string.Empty;
+                    }
                 }
             }
         }
+    }
 
-        private void SearchBar_OnSearchStarted(object sender, FunctionEventArgs<string> e)
+    private void GroupItems(TabControl tabControl, DemoInfoModel demoInfo)
+    {
+        var listBox = VisualHelper.GetChild<ListBox>(tabControl);
+        if (listBox == null) return;
+        listBox.Items.GroupDescriptions?.Clear();
+
+        if (demoInfo.IsGroupEnabled)
         {
-            if (e.Info == null) return;
-            if (!(sender is FrameworkElement searchBar && searchBar.Tag is ListBox listBox)) return;
-            foreach (DemoItemModel item in listBox.Items)
+            Dispatcher.BeginInvoke(new Action(() =>
             {
-                var listBoxItem = listBox.ItemContainerGenerator.ContainerFromItem(item) as ListBoxItem;
-                listBoxItem?.Show(item.Name.ToLower().Contains(e.Info.ToLower()) ||
-                                  item.TargetCtlName.Replace("DemoCtl", "").ToLower().Contains(e.Info.ToLower()));
-            }
+                listBox.Items.GroupDescriptions?.Add(new PropertyGroupDescription("GroupName"));
+            }), DispatcherPriority.Background);
         }
     }
 }

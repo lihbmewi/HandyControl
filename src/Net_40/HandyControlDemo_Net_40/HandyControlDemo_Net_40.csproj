@@ -1,68 +1,23 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D8AE88F8-C36B-4D10-A7F9-22FFCFBA5231}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>HandyControlDemo</RootNamespace>
     <AssemblyName>HandyControlDemo</AssemblyName>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;netle45;netle40</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <LangVersion>8.0</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;netle45;netle40</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <LangVersion>8.0</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup>
+    <RootNamespace>HandyControlDemo</RootNamespace>
+    <TargetFramework>net40</TargetFramework>
     <ApplicationIcon>..\..\Shared\HandyControlDemo_Shared\Resources\Img\icon.ico</ApplicationIcon>
+    <NoWarn>0108;MSB3026;MSB3061</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="System" />
-    <Reference Include="System.Management" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="MvvmLightLibs">
-      <Version>5.4.1.1</Version>
+    <PackageReference Include="AvalonEdit" Version="6.0.1" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>11.0.2</Version>
-    </PackageReference>
+    <PackageReference Include="MvvmLightLibs" Version="5.4.1.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\Shared\HandyControlDemo_Shared\Data\MessageToken.cs">
@@ -71,11 +26,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>MessageToken.tt</DependentUpon>
     </Compile>
-    <Compile Include="..\..\Shared\HandyControlDemo_Shared\Properties\AssemblyInfo.cs">
-      <Link>Properties\AssemblyInfo.cs</Link>
+    <Compile Include="..\..\Shared\HandyControlDemo_Shared\Properties\Langs\LangProvider.cs">
+      <Link>Properties\Langs\LangProvider.cs</Link>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LangProvider.tt</DependentUpon>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="..\..\Shared\HandyControlDemo_Shared\Properties\Langs\Lang.Designer.cs">
       <Link>Properties\Langs\Lang.Designer.cs</Link>
       <AutoGen>True</AutoGen>
@@ -84,6 +40,24 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="Properties\AssemblyInfo.cs" />
+    <Compile Remove="Properties\Langs\Lang.en.Designer.cs" />
+    <Compile Remove="Tools\Helper\CommonHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\HandyControlDemo_Code\HandyControlDemo_Code.csproj" />
+    <ProjectReference Include="..\HandyControl_Net_40\HandyControl_Net_40.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Data\DemoInfo.json">
+      <Link>Data\DemoInfo.json</Link>
+    </Resource>
+    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\chrome_dragon.png">
+      <Link>Resources\Img\chrome_dragon.png</Link>
+    </Resource>
+    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\Cover.png">
+      <Link>Resources\Img\Cover.png</Link>
+    </Resource>
     <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\QQ\1.gif">
       <Link>Resources\Img\QQ\1.gif</Link>
     </Resource>
@@ -195,8 +169,17 @@
     <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\Flag\cn.png">
       <Link>Resources\Img\Flag\cn.png</Link>
     </Resource>
+    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\Flag\ca-Es.png">
+      <Link>Resources\Img\Flag\ca-Es.png</Link>
+    </Resource>
+    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\Flag\cs.png">
+      <Link>Resources\Img\Flag\cs.png</Link>
+    </Resource>
     <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\Flag\en.png">
       <Link>Resources\Img\Flag\en.png</Link>
+    </Resource>
+    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\Flag\es.png">
+      <Link>Resources\Img\Flag\es.png</Link>
     </Resource>
     <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\Flag\fa.png">
       <Link>Resources\Img\Flag\fa.png</Link>
@@ -204,294 +187,35 @@
     <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\Flag\fr.png">
       <Link>Resources\Img\Flag\fr.png</Link>
     </Resource>
+    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\Flag\ja.png">
+      <Link>Resources\Img\Flag\ja.png</Link>
+    </Resource>
+    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\Flag\ko-KR.png">
+      <Link>Resources\Img\Flag\ko-KR.png</Link>
+    </Resource>
+    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\Flag\pt-BR.png">
+      <Link>Resources\Img\Flag\pt-BR.png</Link>
+    </Resource>
+    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\Flag\pl.png">
+      <Link>Resources\Img\Flag\pl.png</Link>
+    </Resource>
+    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\Flag\ru.png">
+      <Link>Resources\Img\Flag\ru.png</Link>
+    </Resource>
+    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\Flag\tr.png">
+      <Link>Resources\Img\Flag\tr.png</Link>
+    </Resource>
+    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\Slack.png">
+      <Link>Resources\Img\Slack.png</Link>
+    </Resource>
     <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\icon-white.ico">
       <Link>Resources\Img\icon-white.ico</Link>
     </Resource>
     <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\icon.ico">
       <Link>Resources\Img\icon.ico</Link>
     </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\Animation_16x.png">
-      <Link>Resources\Img\LeftMainContent\Animation_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\BorderElement_16x.png">
-      <Link>Resources\Img\LeftMainContent\BorderElement_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\Brush_16x.png">
-      <Link>Resources\Img\LeftMainContent\Brush_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\Bubble_16xLG.png">
-      <Link>Resources\Img\LeftMainContent\Bubble_16xLG.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\ButtonClick_16x.png">
-      <Link>Resources\Img\LeftMainContent\ButtonClick_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\Calendar_16x.png">
-      <Link>Resources\Img\LeftMainContent\Calendar_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\Carousel_16x.png">
-      <Link>Resources\Img\LeftMainContent\Carousel_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\CheckBox_16x.png">
-      <Link>Resources\Img\LeftMainContent\CheckBox_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\ColorPalette_16x.png">
-      <Link>Resources\Img\LeftMainContent\ColorPalette_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\ColorWheel_16x.png">
-      <Link>Resources\Img\LeftMainContent\ColorWheel_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\ComboBox_16x.png">
-      <Link>Resources\Img\LeftMainContent\ComboBox_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\ContextMenu_16x.png">
-      <Link>Resources\Img\LeftMainContent\ContextMenu_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\DataGrid_16x.png">
-      <Link>Resources\Img\LeftMainContent\DataGrid_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\DatePicker_16x.png">
-      <Link>Resources\Img\LeftMainContent\DatePicker_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\DetailDataView_16x.png">
-      <Link>Resources\Img\LeftMainContent\DetailDataView_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\Dialog_16x.png">
-      <Link>Resources\Img\LeftMainContent\Dialog_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\DotLarge_16x.png">
-      <Link>Resources\Img\LeftMainContent\DotLarge_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\Expander_16x.png">
-      <Link>Resources\Img\LeftMainContent\Expander_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\FlipVertical_16x.png">
-      <Link>Resources\Img\LeftMainContent\FlipVertical_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\Flow_16x.png">
-      <Link>Resources\Img\LeftMainContent\Flow_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\GoToTop_16x.png">
-      <Link>Resources\Img\LeftMainContent\GoToTop_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\GroupBox_16x.png">
-      <Link>Resources\Img\LeftMainContent\GroupBox_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\HoverMenu_16x.png">
-      <Link>Resources\Img\LeftMainContent\HoverMenu_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\ImageBrowser_16x.png">
-      <Link>Resources\Img\LeftMainContent\ImageBrowser_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\Label_16x.png">
-      <Link>Resources\Img\LeftMainContent\Label_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\LinearCarousel_16x.png">
-      <Link>Resources\Img\LeftMainContent\LinearCarousel_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\ListBox_16x.png">
-      <Link>Resources\Img\LeftMainContent\ListBox_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\ListView_16x.png">
-      <Link>Resources\Img\LeftMainContent\ListView_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\Loading_Blue_16x.png">
-      <Link>Resources\Img\LeftMainContent\Loading_Blue_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\Message_16x.png">
-      <Link>Resources\Img\LeftMainContent\Message_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\NotificationHub_16x.png">
-      <Link>Resources\Img\LeftMainContent\NotificationHub_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\NumericListBox_16x.png">
-      <Link>Resources\Img\LeftMainContent\NumericListBox_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\Paginator_16x.png">
-      <Link>Resources\Img\LeftMainContent\Paginator_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\Panel_16x.png">
-      <Link>Resources\Img\LeftMainContent\Panel_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\PasswordBox_16x.png">
-      <Link>Resources\Img\LeftMainContent\PasswordBox_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\Path_16x.png">
-      <Link>Resources\Img\LeftMainContent\Path_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\ProgressBar_16x.png">
-      <Link>Resources\Img\LeftMainContent\ProgressBar_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\ProgressButton_16x.png">
-      <Link>Resources\Img\LeftMainContent\ProgressButton_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\RadioButton_16x.png">
-      <Link>Resources\Img\LeftMainContent\RadioButton_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\RichTextBox_16x.png">
-      <Link>Resources\Img\LeftMainContent\RichTextBox_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\ScrollBox_16x.png">
-      <Link>Resources\Img\LeftMainContent\ScrollBox_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\Search_16x.png">
-      <Link>Resources\Img\LeftMainContent\Search_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\Shield_16x.png">
-      <Link>Resources\Img\LeftMainContent\Shield_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\Slider_16x.png">
-      <Link>Resources\Img\LeftMainContent\Slider_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\SortAscending_grey_16x.png">
-      <Link>Resources\Img\LeftMainContent\SortAscending_grey_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\SplitterControl_16x.png">
-      <Link>Resources\Img\LeftMainContent\SplitterControl_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\Star.png">
-      <Link>Resources\Img\LeftMainContent\Star.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\TabPage_16x.png">
-      <Link>Resources\Img\LeftMainContent\TabPage_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\Tag_16x.png">
-      <Link>Resources\Img\LeftMainContent\Tag_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\TextBlock_16x.png">
-      <Link>Resources\Img\LeftMainContent\TextBlock_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\TextBox_16x.png">
-      <Link>Resources\Img\LeftMainContent\TextBox_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\Timeline_16x.png">
-      <Link>Resources\Img\LeftMainContent\Timeline_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\TimePicker_16x.png">
-      <Link>Resources\Img\LeftMainContent\TimePicker_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\Time_color_16x.png">
-      <Link>Resources\Img\LeftMainContent\Time_color_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\Toggle_16x.png">
-      <Link>Resources\Img\LeftMainContent\Toggle_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\ToolBar_16x.png">
-      <Link>Resources\Img\LeftMainContent\ToolBar_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\Transfer_16x.png">
-      <Link>Resources\Img\LeftMainContent\Transfer_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\TreeView_16x.png">
-      <Link>Resources\Img\LeftMainContent\TreeView_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\User_16x.png">
-      <Link>Resources\Img\LeftMainContent\User_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\WindowsForm_16x.png">
-      <Link>Resources\Img\LeftMainContent\WindowsForm_16x.png</Link>
-    </Resource>
     <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\under_construction.gif">
       <Link>Resources\Img\under_construction.gif</Link>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\HandyControl_Net_40\HandyControl_Net_40.csproj">
-      <Project>{32204503-2ef0-4681-ae13-aa1feb6c658a}</Project>
-      <Name>HandyControl_Net_40</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\..\Shared\HandyControlDemo_Shared\Properties\Langs\Lang.en.resx">
-      <Link>Properties\Langs\Lang.en.resx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\..\Shared\HandyControlDemo_Shared\Properties\Langs\Lang.fa.resx">
-      <Link>Properties\Langs\Lang.fa.resx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\..\Shared\HandyControlDemo_Shared\Properties\Langs\Lang.fr.resx">
-      <Link>Properties\Langs\Lang.fr.resx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\..\Shared\HandyControlDemo_Shared\Properties\Langs\Lang.resx">
-      <Link>Properties\Langs\Lang.resx</Link>
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Lang.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\fabric-icons.ttf">
-      <Link>Resources\fabric-icons.ttf</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Registry.txt">
-      <Link>Resources\Registry.txt</Link>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\..\Shared\HandyControlDemo_Shared\Data\MessageToken.tt">
-      <Link>Data\MessageToken.tt</Link>
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>MessageToken.cs</LastGenOutput>
-    </Content>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\View_Portrait_16x.png">
-      <Link>Resources\Img\LeftMainContent\View_Portrait_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\TransitioningContentControl_16x.png">
-      <Link>Resources\Img\LeftMainContent\TransitioningContentControl_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\PopupCursor_16x.png">
-      <Link>Resources\Img\LeftMainContent\PopupCursor_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\Cover.png">
-      <Link>Resources\Img\Cover.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\DottedSplitter_16x.png">
-      <Link>Resources\Img\LeftMainContent\DottedSplitter_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\qq_group_1.jpg">
-      <Link>Resources\Img\qq_group_1.jpg</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\qq_group_2.jpg">
-      <Link>Resources\Img\qq_group_2.jpg</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\DataGenerator_16x.png">
-      <Link>Resources\Img\LeftMainContent\DataGenerator_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\SplitButton_16x.png">
-      <Link>Resources\Img\LeftMainContent\SplitButton_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\thumbs_up.png">
-      <Link>Resources\Img\LeftMainContent\thumbs_up.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\Procedure_16x.png">
-      <Link>Resources\Img\LeftMainContent\Procedure_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\HandyControl.png">
-      <Link>Resources\Img\LeftMainContent\HandyControl.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\PolygonHexagon_16x.png">
-      <Link>Resources\Img\LeftMainContent\PolygonHexagon_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\Dynamic_16x.png">
-      <Link>Resources\Img\LeftMainContent\Dynamic_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\Dance.png">
-      <Link>Resources\Img\Dance.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\ImageStack_16x.png">
-      <Link>Resources\Img\LeftMainContent\ImageStack_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\VSO_Card_16x.png">
-      <Link>Resources\Img\LeftMainContent\VSO_Card_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\ButtonGroup_16x.png">
-      <Link>Resources\Img\LeftMainContent\ButtonGroup_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\brackets_Square_16xLG.png">
-      <Link>Resources\Img\LeftMainContent\brackets_Square_16xLG.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\GridPane_16x.png">
-      <Link>Resources\Img\LeftMainContent\GridPane_16x.png</Link>
-    </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\MainMenuControl_16x.png">
-      <Link>Resources\Img\LeftMainContent\MainMenuControl_16x.png</Link>
     </Resource>
     <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\DevOps\DevOps-Boards.png">
       <Link>Resources\Img\DevOps\DevOps-Boards.png</Link>
@@ -508,15 +232,119 @@
     <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\DevOps\DevOps-TestPlans.png">
       <Link>Resources\Img\DevOps\DevOps-TestPlans.png</Link>
     </Resource>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\LeftMainContent\RepeatButton_16x.png">
-      <Link>Resources\Img\LeftMainContent\RepeatButton_16x.png</Link>
+    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\fabric-icons.ttf">
+      <Link>Resources\fabric-icons.ttf</Link>
+    </Resource>
+    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\xshd\CSharp-Dark.xshd">
+      <Link>Resources\xshd\CSharp-Dark.xshd</Link>
+    </Resource>
+    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\xshd\XML-Dark.xshd">
+      <Link>Resources\xshd\XML-Dark.xshd</Link>
+    </Resource>
+    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Registry.txt">
+      <Link>Resources\Registry.txt</Link>
+    </Resource>
+    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\Dance.png">
+      <Link>Resources\Img\Dance.png</Link>
+    </Resource>
+    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Resources\Img\cloud.png">
+      <Link>Resources\Img\cloud.png</Link>
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="..\..\Shared\HandyControlDemo_Shared\Data\DemoInfo.json">
-      <Link>Data\DemoInfo.json</Link>
-    </Resource>
+  <EmbeddedResource Include="..\..\Shared\HandyControlDemo_Shared\Properties\Langs\Lang.tr.resx">
+      <Link>Properties\Langs\Lang.tr.resx</Link>
+    </EmbeddedResource>        
+    <EmbeddedResource Include="..\..\Shared\HandyControlDemo_Shared\Properties\Langs\Lang.ca-ES.resx">
+      <Link>Properties\Langs\Lang.ca-ES.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Shared\HandyControlDemo_Shared\Properties\Langs\Lang.cs.resx">
+      <Link>Properties\Langs\Lang.cs.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Shared\HandyControlDemo_Shared\Properties\Langs\Lang.en.resx">
+      <Link>Properties\Langs\Lang.en.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Shared\HandyControlDemo_Shared\Properties\Langs\Lang.es.resx">
+      <Link>Properties\Langs\Lang.es.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Shared\HandyControlDemo_Shared\Properties\Langs\Lang.fa.resx">
+      <Link>Properties\Langs\Lang.fa.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Shared\HandyControlDemo_Shared\Properties\Langs\Lang.fr.resx">
+      <Link>Properties\Langs\Lang.fr.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Shared\HandyControlDemo_Shared\Properties\Langs\Lang.ja.resx">
+      <Link>Properties\Langs\Lang.ja.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Shared\HandyControlDemo_Shared\Properties\Langs\Lang.ko-KR.resx">
+      <Link>Properties\Langs\Lang.ko-KR.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Shared\HandyControlDemo_Shared\Properties\Langs\Lang.pt-BR.resx">
+      <Link>Properties\Langs\Lang.pt-BR.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Shared\HandyControlDemo_Shared\Properties\Langs\Lang.pl.resx">
+      <Link>Properties\Langs\Lang.pl.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Shared\HandyControlDemo_Shared\Properties\Langs\Lang.ru.resx">
+      <Link>Properties\Langs\Lang.ru.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Shared\HandyControlDemo_Shared\Properties\Langs\Lang.resx">
+      <Link>Properties\Langs\Lang.resx</Link>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Lang.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Shared\HandyControlDemo_Shared\Properties\App.config">
+      <Link>Properties\App.config</Link>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\..\Shared\HandyControlDemo_Shared\Data\MessageToken.tt">
+      <Link>Data\MessageToken.tt</Link>
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>MessageToken.cs</LastGenOutput>
+    </Content>
+    <Content Include="..\..\Shared\HandyControlDemo_Shared\Properties\Langs\LangProvider.tt">
+      <Link>Properties\Langs\LangProvider.tt</Link>
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>LangProvider.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Shared\HandyControlDemo_Shared\Data\MessageToken.tt" Link="Data\MessageToken.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
   </ItemGroup>
   <Import Project="..\..\Shared\HandyControlDemo_Shared\HandyControlDemo_Shared.projitems" Label="Shared" />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+      if not exist Langs md Langs
+      rd /s /q Langs\cs
+      rd /s /q Langs\en
+      rd /s /q Langs\es
+      rd /s /q Langs\fa
+      rd /s /q Langs\fr
+      rd /s /q Langs\ja
+      rd /s /q Langs\ko-KR
+      rd /s /q Langs\pt-BR
+      rd /s /q Langs\pl
+      rd /s /q Langs\ru
+      rd /s /q Langs\tr
+      rd /s /q Langs\ca-Es
+      move cs Langs
+      move en Langs
+      move es Langs
+      move fa Langs
+      move fr Langs
+      move ja Langs
+      move ko-KR Langs
+      move pt-BR Langs
+      move pl Langs
+      move ru Langs
+      move tr Langs
+      move ca-Es Langs
+    </PostBuildEvent>
+    <ApplicationManifest>..\..\Shared\HandyControlDemo_Shared\app.manifest</ApplicationManifest>
+  </PropertyGroup>
 </Project>

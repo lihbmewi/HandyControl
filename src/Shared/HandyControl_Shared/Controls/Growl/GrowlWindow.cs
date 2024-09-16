@@ -1,34 +1,41 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
+using HandyControl.Tools;
+using HandyControl.Tools.Interop;
 
-namespace HandyControl.Controls
+namespace HandyControl.Controls;
+
+public sealed class GrowlWindow : Window
 {
-    [TemplatePart(Name = ElementGrowPanel, Type = typeof(Panel))]
-    internal class GrowlWindow : Window
+    internal Panel GrowlPanel { get; set; }
+
+    internal GrowlWindow()
     {
-        private const string ElementGrowPanel = "PART_GrowPanel";
+        WindowStyle = WindowStyle.None;
+        AllowsTransparency = true;
 
-        public Panel GrowlPanel { get; set; }
-
-        public GrowlWindow()
+        GrowlPanel = new StackPanel
         {
-            WindowStyle = WindowStyle.None;
-            AllowsTransparency = true;
-        }
+            VerticalAlignment = VerticalAlignment.Top
+        };
 
-        public override void OnApplyTemplate()
+        Content = new ScrollViewer
         {
-            base.OnApplyTemplate();
-
-            GrowlPanel = GetTemplateChild(ElementGrowPanel) as Panel;
-        }
-
-        public void Init()
-        {
-            var desktopWorkingArea = SystemParameters.WorkArea;
-            Height = desktopWorkingArea.Height;
-            Left = desktopWorkingArea.Right - Width;
-            Top = 0;
-        }
+            VerticalScrollBarVisibility = ScrollBarVisibility.Hidden,
+            IsInertiaEnabled = true,
+            Content = GrowlPanel
+        };
     }
+
+    internal void Init()
+    {
+        var desktopWorkingArea = SystemParameters.WorkArea;
+        Height = desktopWorkingArea.Height;
+        Left = desktopWorkingArea.Right - Width;
+        Top = 0;
+    }
+
+    protected override void OnSourceInitialized(EventArgs e)
+        => InteropMethods.IntDestroyMenu(this.GetHwndSource().CreateHandleRef());
 }

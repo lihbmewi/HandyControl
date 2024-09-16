@@ -1,25 +1,19 @@
-﻿using System;
-using System.Windows;
-#if netle40
+﻿using System.Windows;
 using GalaSoft.MvvmLight.Command;
-#else
-using GalaSoft.MvvmLight.CommandWpf;
-# endif
 using HandyControlDemo.Tools;
 
-namespace HandyControlDemo.ViewModel
-{
-    public class WindowDemoViewModel
-    {
-        public RelayCommand<string> OpenWindowCmd => new Lazy<RelayCommand<string>>(() => new RelayCommand<string>(OpenWindow)).Value;
+namespace HandyControlDemo.ViewModel;
 
-        private void OpenWindow(string windowTag)
+public class WindowDemoViewModel
+{
+    public RelayCommand<string> OpenWindowCmd => new(OpenWindow);
+
+    private void OpenWindow(string windowTag)
+    {
+        if (AssemblyHelper.CreateInternalInstance($"Window.{windowTag}") is System.Windows.Window window)
         {
-            if (AssemblyHelper.CreateInternalInstance($"Window.{windowTag}") is System.Windows.Window window)
-            {
-                window.Owner = Application.Current.MainWindow;
-                window.ShowDialog();
-            }
+            window.Owner = Application.Current.MainWindow;
+            window.ShowDialog();
         }
     }
 }

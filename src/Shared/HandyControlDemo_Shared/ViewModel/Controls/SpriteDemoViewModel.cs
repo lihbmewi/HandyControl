@@ -1,17 +1,10 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight.Command;
 using HandyControl.Controls;
 using HandyControlDemo.UserControl;
-#if netle40
-using GalaSoft.MvvmLight.Command;
-#else
-using GalaSoft.MvvmLight.CommandWpf;
-# endif
 
-namespace HandyControlDemo.ViewModel
+namespace HandyControlDemo.ViewModel;
+
+public class SpriteDemoViewModel
 {
-    public class SpriteDemoViewModel
-    {
-        public RelayCommand OpenCmd => new Lazy<RelayCommand>(() =>
-            new RelayCommand(()=> Sprite.Show(new AppSprite()))).Value;
-    }
+    public RelayCommand OpenCmd => new(() => Sprite.Show(new AppSprite()));
 }

@@ -1,27 +1,19 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:controls="clr-namespace:HandyControl.Controls"
+                    xmlns:hc="clr-namespace:HandyControl.Controls"
                     xmlns:interactivity="clr-namespace:HandyControl.Interactivity">
 
-    <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="../Basic/Paths.xaml"/>
-        <ResourceDictionary Source="Button.xaml"/>
-        <ResourceDictionary Source="ListBox.xaml"/>
-    </ResourceDictionary.MergedDictionaries>
-
-    <Style x:Key="CarouselListBoxItemStyle" BasedOn="{StaticResource ListBoxItemCustom}" TargetType="ListBoxItem">
-        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-        <Setter Property="Height" Value="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=ItemsControl}}"/>
-    </Style>
-
-    <ItemsPanelTemplate x:Key="CarouselListBoxItemPanelTemplate">
-        <StackPanel FocusVisualStyle="{x:Null}" Orientation="Horizontal" HorizontalAlignment="Left"/>
-    </ItemsPanelTemplate>
-
-    <Style x:Key="CarouselListBox" BasedOn="{StaticResource ListBoxBaseStyle}" TargetType="ListBox">
-        <Setter Property="ItemsPanel" Value="{StaticResource CarouselListBoxItemPanelTemplate}"/>
-        <Setter Property="ItemContainerStyle" Value="{StaticResource CarouselListBoxItemStyle}"/>
+    <Style x:Key="CarouselItemBaseStyle" TargetType="hc:CarouselItem">
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="hc:CarouselItem">
+                    <Border BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}">
+                        <ContentPresenter Margin="{TemplateBinding Padding}" ContentTemplate="{Binding ItemTemplate,RelativeSource={RelativeSource AncestorType=hc:Carousel}}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style x:Key="CarouselPateButton" BasedOn="{StaticResource BaseStyle}" TargetType="RadioButton">
@@ -52,11 +44,12 @@
         </Setter>
     </Style>
 
-    <Style TargetType="controls:Carousel" BasedOn="{StaticResource CarouselListBox}">
+    <Style TargetType="hc:Carousel">
         <Setter Property="PageButtonStyle" Value="{StaticResource CarouselPateButton}"/>
+        <Setter Property="ItemContainerStyle" Value="{StaticResource CarouselItemBaseStyle}"/>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="controls:Carousel">
+                <ControlTemplate TargetType="hc:Carousel">
                     <ControlTemplate.Triggers>
                         <EventTrigger RoutedEvent="FrameworkElement.MouseEnter">
                             <BeginStoryboard>
@@ -73,9 +66,9 @@
                             </BeginStoryboard>
                         </EventTrigger>
                     </ControlTemplate.Triggers>
-                    <controls:SimplePanel ClipToBounds="True">
-                        <ItemsPresenter x:Name="PART_ItemsControl" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" HorizontalAlignment="Left"/>
-                        <controls:SimplePanel x:Name="GridTop" Opacity="0">
+                    <hc:SimplePanel ClipToBounds="True">
+                        <StackPanel x:Name="PART_Panel" Orientation="Horizontal"/>
+                        <hc:SimplePanel x:Name="GridTop" Opacity="0">
                             <Button Command="interactivity:ControlCommands.Prev" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="30,0,0,0" Style="{StaticResource ButtonCustom}">
                                 <Border Width="50" Height="100" Background="{DynamicResource DarkOpacityBrush}" CornerRadius="4">
                                     <Path Margin="16" Fill="White" Style="{StaticResource LeftPathStyle}"/>
@@ -86,9 +79,9 @@
                                     <Path Margin="16" Fill="White" Style="{StaticResource RightPathStyle}"/>
                                 </Border>
                             </Button>
-                        </controls:SimplePanel>
+                        </hc:SimplePanel>
                         <StackPanel Name="PART_PanelPage" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,20"/>
-                    </controls:SimplePanel>
+                    </hc:SimplePanel>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

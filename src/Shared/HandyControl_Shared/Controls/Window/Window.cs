@@ -1,11 +1,16 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using HandyControl.Data;
+using HandyControl.Tools;
 using HandyControl.Tools.Extension;
-#if netle40
+using HandyControl.Tools.Interop;
+using HandyControl.Tools.Helper;
+
+#if NET40
 using Microsoft.Windows.Shell;
 #else
 using System.Windows.Shell;
@@ -16,71 +21,15 @@ namespace HandyControl.Controls
     [TemplatePart(Name = ElementNonClientArea, Type = typeof(UIElement))]
     public class Window : System.Windows.Window
     {
+        #region fields
+
         private const string ElementNonClientArea = "PART_NonClientArea";
-
-        public static readonly DependencyProperty NonClientAreaContentProperty = DependencyProperty.Register(
-            "NonClientAreaContent", typeof(object), typeof(Window), new PropertyMetadata(default(object)));
-
-        public static readonly DependencyProperty CloseButtonHoverBackgroundProperty = DependencyProperty.Register(
-            "CloseButtonHoverBackground", typeof(Brush), typeof(Window),
-            new PropertyMetadata(default(Brush)));
-
-        public static readonly DependencyProperty CloseButtonHoverForegroundProperty =
-            DependencyProperty.Register(
-                "CloseButtonHoverForeground", typeof(Brush), typeof(Window),
-                new PropertyMetadata(default(Brush)));
-
-        public static readonly DependencyProperty CloseButtonBackgroundProperty = DependencyProperty.Register(
-            "CloseButtonBackground", typeof(Brush), typeof(Window), new PropertyMetadata(Brushes.Transparent));
-
-        public static readonly DependencyProperty CloseButtonForegroundProperty = DependencyProperty.Register(
-            "CloseButtonForeground", typeof(Brush), typeof(Window),
-            new PropertyMetadata(Brushes.White));
-
-        public static readonly DependencyProperty OtherButtonBackgroundProperty = DependencyProperty.Register(
-            "OtherButtonBackground", typeof(Brush), typeof(Window), new PropertyMetadata(Brushes.Transparent));
-
-        public static readonly DependencyProperty OtherButtonForegroundProperty = DependencyProperty.Register(
-            "OtherButtonForeground", typeof(Brush), typeof(Window),
-            new PropertyMetadata(Brushes.White));
-
-        public static readonly DependencyProperty OtherButtonHoverBackgroundProperty = DependencyProperty.Register(
-            "OtherButtonHoverBackground", typeof(Brush), typeof(Window),
-            new PropertyMetadata(default(Brush)));
-
-        public static readonly DependencyProperty OtherButtonHoverForegroundProperty =
-            DependencyProperty.Register(
-                "OtherButtonHoverForeground", typeof(Brush), typeof(Window),
-                new PropertyMetadata(default(Brush)));
-
-        public static readonly DependencyProperty NonClientAreaBackgroundProperty = DependencyProperty.Register(
-            "NonClientAreaBackground", typeof(Brush), typeof(Window),
-            new PropertyMetadata(default(Brush)));
-
-        public static readonly DependencyProperty NonClientAreaForegroundProperty = DependencyProperty.Register(
-            "NonClientAreaForeground", typeof(Brush), typeof(Window),
-            new PropertyMetadata(default(Brush)));
-
-        public static readonly DependencyProperty NonClientAreaHeightProperty = DependencyProperty.Register(
-            "NonClientAreaHeight", typeof(double), typeof(Window),
-            new PropertyMetadata(26.0));
-
-        public static readonly DependencyProperty ShowNonClientAreaProperty = DependencyProperty.Register(
-            "ShowNonClientArea", typeof(bool), typeof(Window),
-            new PropertyMetadata(ValueBoxes.TrueBox, OnShowNonClientAreaChanged));
-
-        public static readonly DependencyProperty ShowTitleProperty = DependencyProperty.Register(
-            "ShowTitle", typeof(bool), typeof(Window), new PropertyMetadata(ValueBoxes.TrueBox));
-
-        public static readonly DependencyProperty IsFullScreenProperty = DependencyProperty.Register(
-            "IsFullScreen", typeof(bool), typeof(Window),
-            new PropertyMetadata(ValueBoxes.FalseBox, OnIsFullScreenChanged));
 
         private bool _isFullScreen;
 
         private Thickness _actualBorderThickness;
 
-        private UIElement _nonClientArea;
+        private readonly Thickness _commonPadding;
 
         private bool _showNonClientArea = true;
 
@@ -92,9 +41,20 @@ namespace HandyControl.Controls
 
         private ResizeMode _tempResizeMode;
 
+        private UIElement _nonClientArea;
+
+        #endregion
+
+        #region ctor
+
+        static Window()
+        {
+            StyleProperty.OverrideMetadata(typeof(Window), new FrameworkPropertyMetadata(ResourceHelper.GetResourceInternal<Style>(ResourceToken.WindowWin10)));
+        }
+
         public Window()
         {
-#if netle40
+#if NET40
             var chrome = new WindowChrome
             {
                 CornerRadius = new CornerRadius(),
@@ -103,53 +63,29 @@ namespace HandyControl.Controls
 #else
             var chrome = new WindowChrome
             {
-                CornerRadius = new CornerRadius(),
-                GlassFrameThickness = new Thickness(0, 0, 0, 1),
                 UseAeroCaptionButtons = false
             };
+
+            if (SystemHelper.GetSystemVersionInfo() < SystemVersionInfo.Windows11_22H2)
+            {
+                chrome.GlassFrameThickness = new Thickness(0, 0, 0, 1);
+                chrome.CornerRadius = new CornerRadius();
+            }
 #endif
             BindingOperations.SetBinding(chrome, WindowChrome.CaptionHeightProperty,
-                new Binding(NonClientAreaHeightProperty.Name) {Source = this});
+                new Binding(NonClientAreaHeightProperty.Name) { Source = this });
             WindowChrome.SetWindowChrome(this, chrome);
+            _commonPadding = Padding;
 
-            Loaded += (s, e) => OnLoaded(e);            
+            Loaded += (s, e) => OnLoaded(e);
         }
 
-        public Brush CloseButtonBackground
-        {
-            get => (Brush) GetValue(CloseButtonBackgroundProperty);
-            set => SetValue(CloseButtonBackgroundProperty, value);
-        }
+        #endregion 
 
-        public Brush CloseButtonForeground
-        {
-            get => (Brush) GetValue(CloseButtonForegroundProperty);
-            set => SetValue(CloseButtonForegroundProperty, value);
-        }
+        #region prop
 
-        public Brush OtherButtonBackground
-        {
-            get => (Brush) GetValue(OtherButtonBackgroundProperty);
-            set => SetValue(OtherButtonBackgroundProperty, value);
-        }
-
-        public Brush OtherButtonForeground
-        {
-            get => (Brush) GetValue(OtherButtonForegroundProperty);
-            set => SetValue(OtherButtonForegroundProperty, value);
-        }
-
-        public double NonClientAreaHeight
-        {
-            get => (double) GetValue(NonClientAreaHeightProperty);
-            set => SetValue(NonClientAreaHeightProperty, value);
-        }
-
-        public bool IsFullScreen
-        {
-            get => (bool) GetValue(IsFullScreenProperty);
-            set => SetValue(IsFullScreenProperty, value);
-        }
+        public static readonly DependencyProperty NonClientAreaContentProperty = DependencyProperty.Register(
+            nameof(NonClientAreaContent), typeof(object), typeof(Window), new PropertyMetadata(default(object)));
 
         public object NonClientAreaContent
         {
@@ -157,11 +93,20 @@ namespace HandyControl.Controls
             set => SetValue(NonClientAreaContentProperty, value);
         }
 
+        public static readonly DependencyProperty CloseButtonHoverBackgroundProperty = DependencyProperty.Register(
+            nameof(CloseButtonHoverBackground), typeof(Brush), typeof(Window),
+            new PropertyMetadata(default(Brush)));
+
         public Brush CloseButtonHoverBackground
         {
             get => (Brush) GetValue(CloseButtonHoverBackgroundProperty);
             set => SetValue(CloseButtonHoverBackgroundProperty, value);
         }
+
+        public static readonly DependencyProperty CloseButtonHoverForegroundProperty =
+            DependencyProperty.Register(
+                nameof(CloseButtonHoverForeground), typeof(Brush), typeof(Window),
+                new PropertyMetadata(default(Brush)));
 
         public Brush CloseButtonHoverForeground
         {
@@ -169,11 +114,58 @@ namespace HandyControl.Controls
             set => SetValue(CloseButtonHoverForegroundProperty, value);
         }
 
+        public static readonly DependencyProperty CloseButtonBackgroundProperty = DependencyProperty.Register(
+            nameof(CloseButtonBackground), typeof(Brush), typeof(Window), new PropertyMetadata(Brushes.Transparent));
+
+        public Brush CloseButtonBackground
+        {
+            get => (Brush) GetValue(CloseButtonBackgroundProperty);
+            set => SetValue(CloseButtonBackgroundProperty, value);
+        }
+
+        public static readonly DependencyProperty CloseButtonForegroundProperty = DependencyProperty.Register(
+            nameof(CloseButtonForeground), typeof(Brush), typeof(Window),
+            new PropertyMetadata(Brushes.White));
+
+        public Brush CloseButtonForeground
+        {
+            get => (Brush) GetValue(CloseButtonForegroundProperty);
+            set => SetValue(CloseButtonForegroundProperty, value);
+        }
+
+        public static readonly DependencyProperty OtherButtonBackgroundProperty = DependencyProperty.Register(
+            nameof(OtherButtonBackground), typeof(Brush), typeof(Window), new PropertyMetadata(Brushes.Transparent));
+
+        public Brush OtherButtonBackground
+        {
+            get => (Brush) GetValue(OtherButtonBackgroundProperty);
+            set => SetValue(OtherButtonBackgroundProperty, value);
+        }
+
+        public static readonly DependencyProperty OtherButtonForegroundProperty = DependencyProperty.Register(
+            nameof(OtherButtonForeground), typeof(Brush), typeof(Window),
+            new PropertyMetadata(Brushes.White));
+
+        public Brush OtherButtonForeground
+        {
+            get => (Brush) GetValue(OtherButtonForegroundProperty);
+            set => SetValue(OtherButtonForegroundProperty, value);
+        }
+
+        public static readonly DependencyProperty OtherButtonHoverBackgroundProperty = DependencyProperty.Register(
+            nameof(OtherButtonHoverBackground), typeof(Brush), typeof(Window),
+            new PropertyMetadata(default(Brush)));
+
         public Brush OtherButtonHoverBackground
         {
             get => (Brush) GetValue(OtherButtonHoverBackgroundProperty);
             set => SetValue(OtherButtonHoverBackgroundProperty, value);
         }
+
+        public static readonly DependencyProperty OtherButtonHoverForegroundProperty =
+            DependencyProperty.Register(
+                nameof(OtherButtonHoverForeground), typeof(Brush), typeof(Window),
+                new PropertyMetadata(default(Brush)));
 
         public Brush OtherButtonHoverForeground
         {
@@ -181,11 +173,19 @@ namespace HandyControl.Controls
             set => SetValue(OtherButtonHoverForegroundProperty, value);
         }
 
+        public static readonly DependencyProperty NonClientAreaBackgroundProperty = DependencyProperty.Register(
+            nameof(NonClientAreaBackground), typeof(Brush), typeof(Window),
+            new PropertyMetadata(default(Brush)));
+
         public Brush NonClientAreaBackground
         {
             get => (Brush) GetValue(NonClientAreaBackgroundProperty);
             set => SetValue(NonClientAreaBackgroundProperty, value);
         }
+
+        public static readonly DependencyProperty NonClientAreaForegroundProperty = DependencyProperty.Register(
+            nameof(NonClientAreaForeground), typeof(Brush), typeof(Window),
+            new PropertyMetadata(default(Brush)));
 
         public Brush NonClientAreaForeground
         {
@@ -193,16 +193,195 @@ namespace HandyControl.Controls
             set => SetValue(NonClientAreaForegroundProperty, value);
         }
 
+        public static readonly DependencyProperty NonClientAreaHeightProperty = DependencyProperty.Register(
+            nameof(NonClientAreaHeight), typeof(double), typeof(Window),
+            new PropertyMetadata(22.0));
+
+        public double NonClientAreaHeight
+        {
+            get => (double) GetValue(NonClientAreaHeightProperty);
+            set => SetValue(NonClientAreaHeightProperty, value);
+        }
+
+        public static readonly DependencyProperty ShowNonClientAreaProperty = DependencyProperty.Register(
+            nameof(ShowNonClientArea), typeof(bool), typeof(Window),
+            new PropertyMetadata(ValueBoxes.TrueBox, OnShowNonClientAreaChanged));
+
         public bool ShowNonClientArea
         {
             get => (bool) GetValue(ShowNonClientAreaProperty);
-            set => SetValue(ShowNonClientAreaProperty, value);
+            set => SetValue(ShowNonClientAreaProperty, ValueBoxes.BooleanBox(value));
         }
+
+        public static readonly DependencyProperty ShowTitleProperty = DependencyProperty.Register(
+            nameof(ShowTitle), typeof(bool), typeof(Window), new PropertyMetadata(ValueBoxes.TrueBox));
 
         public bool ShowTitle
         {
             get => (bool) GetValue(ShowTitleProperty);
-            set => SetValue(ShowTitleProperty, value);
+            set => SetValue(ShowTitleProperty, ValueBoxes.BooleanBox(value));
+        }
+
+        public static readonly DependencyProperty IsFullScreenProperty = DependencyProperty.Register(
+            nameof(IsFullScreen), typeof(bool), typeof(Window),
+            new PropertyMetadata(ValueBoxes.FalseBox, OnIsFullScreenChanged));
+
+        public bool IsFullScreen
+        {
+            get => (bool) GetValue(IsFullScreenProperty);
+            set => SetValue(IsFullScreenProperty, ValueBoxes.BooleanBox(value));
+        }
+
+        public static readonly DependencyProperty ShowIconProperty = DependencyProperty.Register(
+            nameof(ShowIcon), typeof(bool), typeof(Window), new PropertyMetadata(ValueBoxes.TrueBox));
+
+        public bool ShowIcon
+        {
+            get => (bool) GetValue(ShowIconProperty);
+            set => SetValue(ShowIconProperty, value);
+        }
+
+        #endregion
+
+        #region methods
+
+        #region public
+
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            _nonClientArea = GetTemplateChild(ElementNonClientArea) as UIElement;
+        }
+
+        #endregion
+
+        #region protected
+
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+            this.GetHwndSource()?.AddHook(HwndSourceHook);
+        }
+
+        protected override void OnStateChanged(EventArgs e)
+        {
+            base.OnStateChanged(e);
+            if (WindowState == WindowState.Maximized)
+            {
+                BorderThickness = new Thickness();
+                _tempNonClientAreaHeight = NonClientAreaHeight;
+                NonClientAreaHeight += 8;
+            }
+            else
+            {
+                BorderThickness = _actualBorderThickness;
+                NonClientAreaHeight = _tempNonClientAreaHeight;
+            }
+        }
+
+        protected void OnLoaded(RoutedEventArgs args)
+        {
+            _actualBorderThickness = BorderThickness;
+            _tempNonClientAreaHeight = NonClientAreaHeight;
+
+            if (WindowState == WindowState.Maximized)
+            {
+                BorderThickness = new Thickness();
+                _tempNonClientAreaHeight += 8;
+            }
+
+            CommandBindings.Add(new CommandBinding(SystemCommands.MinimizeWindowCommand,
+                (s, e) => WindowState = WindowState.Minimized));
+            CommandBindings.Add(new CommandBinding(SystemCommands.MaximizeWindowCommand,
+                (s, e) => WindowState = WindowState.Maximized));
+            CommandBindings.Add(new CommandBinding(SystemCommands.RestoreWindowCommand,
+                (s, e) => WindowState = WindowState.Normal));
+            CommandBindings.Add(new CommandBinding(SystemCommands.CloseWindowCommand, (s, e) => Close()));
+            CommandBindings.Add(new CommandBinding(SystemCommands.ShowSystemMenuCommand, ShowSystemMenu));
+
+            _tempWindowState = WindowState;
+            _tempWindowStyle = WindowStyle;
+            _tempResizeMode = ResizeMode;
+
+            SwitchIsFullScreen(_isFullScreen);
+            SwitchShowNonClientArea(_showNonClientArea);
+
+            if (WindowState == WindowState.Maximized)
+            {
+                _tempNonClientAreaHeight -= 8;
+            }
+
+            if (SizeToContent != SizeToContent.WidthAndHeight)
+                return;
+
+            SizeToContent = SizeToContent.Height;
+            Dispatcher.BeginInvoke(new Action(() => { SizeToContent = SizeToContent.WidthAndHeight; }));
+        }
+
+        protected override void OnContentRendered(EventArgs e)
+        {
+            base.OnContentRendered(e);
+            if (SizeToContent == SizeToContent.WidthAndHeight)
+                InvalidateMeasure();
+        }
+
+        #endregion
+
+        #region private
+
+        private void WmGetMinMaxInfo(IntPtr hwnd, IntPtr lParam)
+        {
+            var mmi = (InteropValues.MINMAXINFO) Marshal.PtrToStructure(lParam, typeof(InteropValues.MINMAXINFO));
+            var monitor = InteropMethods.MonitorFromWindow(hwnd, InteropValues.MONITOR_DEFAULTTONEAREST);
+
+            if (monitor != IntPtr.Zero && mmi != null)
+            {
+                InteropValues.APPBARDATA appBarData = default;
+                var autoHide = InteropMethods.SHAppBarMessage(4, ref appBarData) != 0;
+                if (autoHide)
+                {
+                    var monitorInfo = default(InteropValues.MONITORINFO);
+                    monitorInfo.cbSize = (uint) Marshal.SizeOf(typeof(InteropValues.MONITORINFO));
+                    InteropMethods.GetMonitorInfo(monitor, ref monitorInfo);
+                    var rcWorkArea = monitorInfo.rcWork;
+                    var rcMonitorArea = monitorInfo.rcMonitor;
+                    mmi.ptMaxPosition.X = Math.Abs(rcWorkArea.Left - rcMonitorArea.Left);
+                    mmi.ptMaxPosition.Y = Math.Abs(rcWorkArea.Top - rcMonitorArea.Top);
+                    mmi.ptMaxSize.X = Math.Abs(rcWorkArea.Right - rcWorkArea.Left);
+                    mmi.ptMaxSize.Y = Math.Abs(rcWorkArea.Bottom - rcWorkArea.Top - 1);
+                }
+            }
+
+            Marshal.StructureToPtr(mmi, lParam, true);
+        }
+
+        private IntPtr HwndSourceHook(IntPtr hwnd, int msg, IntPtr wparam, IntPtr lparam, ref bool handled)
+        {
+            switch (msg)
+            {
+                case InteropValues.WM_WINDOWPOSCHANGED:
+                    Padding = WindowState == WindowState.Maximized ? WindowHelper.WindowMaximizedPadding : _commonPadding;
+                    break;
+                case InteropValues.WM_GETMINMAXINFO:
+                    WmGetMinMaxInfo(hwnd, lparam);
+                    Padding = WindowState == WindowState.Maximized ? WindowHelper.WindowMaximizedPadding : _commonPadding;
+                    break;
+                case InteropValues.WM_NCHITTEST:
+                    // for fixing #886
+                    // https://developercommunity.visualstudio.com/t/overflow-exception-in-windowchrome/167357
+                    try
+                    {
+                        _ = lparam.ToInt32();
+                    }
+                    catch (OverflowException)
+                    {
+                        handled = true;
+                    }
+                    break;
+            }
+
+            return IntPtr.Zero;
         }
 
         private static void OnShowNonClientAreaChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -290,68 +469,6 @@ namespace HandyControl.Controls
             }
         }
 
-        protected override void OnStateChanged(EventArgs e)
-        {
-            base.OnStateChanged(e);
-            if (WindowState == WindowState.Maximized)
-            {
-                BorderThickness = new Thickness();
-                _tempNonClientAreaHeight = NonClientAreaHeight;
-                NonClientAreaHeight += 8;
-            }
-            else if (WindowState == WindowState.Normal)
-            {
-                BorderThickness = _actualBorderThickness;
-                NonClientAreaHeight = _tempNonClientAreaHeight;
-            }
-        }
-
-        protected void OnLoaded(RoutedEventArgs args)
-        {
-            _actualBorderThickness = BorderThickness;
-            _tempNonClientAreaHeight = NonClientAreaHeight;
-
-            if (WindowState == WindowState.Maximized)
-            {
-                BorderThickness = new Thickness();
-                _tempNonClientAreaHeight += 8;
-            }
-
-            CommandBindings.Add(new CommandBinding(SystemCommands.MinimizeWindowCommand,
-                (s, e) => WindowState = WindowState.Minimized));
-            CommandBindings.Add(new CommandBinding(SystemCommands.MaximizeWindowCommand,
-                (s, e) => WindowState = WindowState.Maximized));
-            CommandBindings.Add(new CommandBinding(SystemCommands.RestoreWindowCommand,
-                (s, e) => WindowState = WindowState.Normal));
-            CommandBindings.Add(new CommandBinding(SystemCommands.CloseWindowCommand, (s, e) => Close()));
-            CommandBindings.Add(new CommandBinding(SystemCommands.ShowSystemMenuCommand, ShowSystemMenu));
-
-            _tempWindowState = WindowState;
-            _tempWindowStyle = WindowStyle;
-            _tempResizeMode = ResizeMode;
-
-            SwitchIsFullScreen(_isFullScreen);
-            SwitchShowNonClientArea(_showNonClientArea);
-
-            if (WindowState == WindowState.Maximized)
-            {
-                _tempNonClientAreaHeight -= 8;
-            }
-
-            if (SizeToContent != SizeToContent.WidthAndHeight)
-                return;
-
-            SizeToContent = SizeToContent.Height;
-            Dispatcher.BeginInvoke(new Action(() => { SizeToContent = SizeToContent.WidthAndHeight; }));
-        }
-
-        public override void OnApplyTemplate()
-        {
-            base.OnApplyTemplate();
-
-            _nonClientArea = GetTemplateChild(ElementNonClientArea) as UIElement;
-        }
-
         private void ShowSystemMenu(object sender, ExecutedRoutedEventArgs e)
         {
             var point = WindowState == WindowState.Maximized
@@ -360,11 +477,8 @@ namespace HandyControl.Controls
             SystemCommands.ShowSystemMenu(this, point);
         }
 
-        protected override void OnContentRendered(EventArgs e)
-        {
-            base.OnContentRendered(e);
-            if (SizeToContent == SizeToContent.WidthAndHeight)
-                InvalidateMeasure();
-        }
+        #endregion
+
+        #endregion
     }
 }

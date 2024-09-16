@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:controls="clr-namespace:HandyControl.Controls">
+                    xmlns:hc="clr-namespace:HandyControl.Controls">
 
     <Style x:Key="ScrollBarBaseRepeatButton" TargetType="RepeatButton">
         <Setter Property="OverridesDefaultStyle" Value="true"/>
@@ -23,7 +23,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Thumb">
                     <ControlTemplate.Resources>
-                        <Storyboard x:Key="Storyboard1">
+                        <Storyboard x:Key="StoryboardMouseEnter">
                             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Width" Storyboard.TargetName="rectangle">
                                 <EasingDoubleKeyFrame KeyTime="0:0:.1" Value="8"/>
                             </DoubleAnimationUsingKeyFrames>
@@ -37,7 +37,7 @@
                                 <EasingDoubleKeyFrame KeyTime="0:0:.1" Value="0"/>
                             </DoubleAnimationUsingKeyFrames>
                         </Storyboard>
-                        <Storyboard x:Key="Storyboard2">
+                        <Storyboard x:Key="StoryboardMouseLeave">
                             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Width" Storyboard.TargetName="rectangle">
                                 <EasingDoubleKeyFrame KeyTime="0:0:.2" Value="2"/>
                             </DoubleAnimationUsingKeyFrames>
@@ -69,17 +69,17 @@
                             <Setter Property="Fill" TargetName="rectangle" Value="{DynamicResource PrimaryTextBrush}"/>
                         </Trigger>
                         <EventTrigger RoutedEvent="MouseEnter">
-                            <BeginStoryboard Storyboard="{StaticResource Storyboard1}"/>
+                            <BeginStoryboard Storyboard="{StaticResource StoryboardMouseEnter}"/>
                         </EventTrigger>
                         <EventTrigger RoutedEvent="MouseLeave">
-                            <BeginStoryboard Storyboard="{StaticResource Storyboard2}"/>
+                            <BeginStoryboard Storyboard="{StaticResource StoryboardMouseLeave}"/>
                         </EventTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <Style x:Key="ScrollBarBaseThumbHorizontal" TargetType="Thumb">
         <Setter Property="OverridesDefaultStyle" Value="true"/>
         <Setter Property="IsTabStop" Value="false"/>
@@ -87,7 +87,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Thumb">
                     <ControlTemplate.Resources>
-                        <Storyboard x:Key="Storyboard1">
+                        <Storyboard x:Key="StoryboardMouseEnter">
                             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Height" Storyboard.TargetName="rectangle">
                                 <EasingDoubleKeyFrame KeyTime="0:0:.1" Value="8"/>
                             </DoubleAnimationUsingKeyFrames>
@@ -101,7 +101,7 @@
                                 <EasingDoubleKeyFrame KeyTime="0:0:.1" Value="0"/>
                             </DoubleAnimationUsingKeyFrames>
                         </Storyboard>
-                        <Storyboard x:Key="Storyboard2">
+                        <Storyboard x:Key="StoryboardMouseLeave">
                             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Height" Storyboard.TargetName="rectangle">
                                 <EasingDoubleKeyFrame KeyTime="0:0:.2" Value="2"/>
                             </DoubleAnimationUsingKeyFrames>
@@ -117,7 +117,7 @@
                         </Storyboard>
                     </ControlTemplate.Resources>
                     <Border Height="{TemplateBinding Height}" Background="Transparent">
-                        <Rectangle x:Name="rectangle" RadiusX="4" RadiusY="4" VerticalAlignment="Bottom" Height="2" SnapsToDevicePixels="True" Width="{TemplateBinding Width}" Fill="{TemplateBinding Background}">
+                        <Rectangle x:Name="rectangle" RadiusX="1" RadiusY="1" VerticalAlignment="Bottom" Height="2" SnapsToDevicePixels="True" Width="{TemplateBinding Width}" Fill="{TemplateBinding Background}">
                             <Rectangle.RenderTransform>
                                 <TransformGroup>
                                     <TranslateTransform Y="-2"/>
@@ -133,10 +133,10 @@
                             <Setter Property="Fill" TargetName="rectangle" Value="{DynamicResource PrimaryTextBrush}"/>
                         </Trigger>
                         <EventTrigger RoutedEvent="MouseEnter">
-                            <BeginStoryboard Storyboard="{StaticResource Storyboard1}"/>
+                            <BeginStoryboard Storyboard="{StaticResource StoryboardMouseEnter}"/>
                         </EventTrigger>
                         <EventTrigger RoutedEvent="MouseLeave">
-                            <BeginStoryboard Storyboard="{StaticResource Storyboard2}"/>
+                            <BeginStoryboard Storyboard="{StaticResource StoryboardMouseLeave}"/>
                         </EventTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -147,7 +147,7 @@
     <Style x:Key="ScrollBarBaseStyle" TargetType="ScrollBar">
         <Setter Property="Stylus.IsPressAndHoldEnabled" Value="false"/>
         <Setter Property="Stylus.IsFlicksEnabled" Value="false"/>
-        <Setter Property="Foreground" Value="{DynamicResource ThirdlyTextBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Focusable" Value="False"/>
         <Setter Property="BorderThickness" Value="0"/>
@@ -156,7 +156,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ScrollBar">
-                    <controls:SimplePanel x:Name="Bg" SnapsToDevicePixels="true">
+                    <hc:SimplePanel x:Name="Bg" SnapsToDevicePixels="true">
                         <Border Background="{TemplateBinding Background}" />
                         <Track x:Name="PART_Track" IsDirectionReversed="true" IsEnabled="{TemplateBinding IsMouseOver}">
                             <Track.DecreaseRepeatButton>
@@ -169,21 +169,20 @@
                                 <Thumb Background="{TemplateBinding Foreground}" Style="{StaticResource ScrollBarBaseThumbVertical}"/>
                             </Track.Thumb>
                         </Track>
-                    </controls:SimplePanel>
+                    </hc:SimplePanel>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
         <Style.Triggers>
             <Trigger Property="Orientation" Value="Horizontal">
                 <Setter Property="Width" Value="Auto"/>
-                <Setter Property="MinWidth" Value="0"/>
+                <Setter Property="MinWidth" Value="8"/>
                 <Setter Property="Height" Value="8"/>
                 <Setter Property="MinHeight" Value="8"/>
-                <Setter Property="BorderThickness" Value="0,1"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="ScrollBar">
-                            <controls:SimplePanel x:Name="Bg" SnapsToDevicePixels="true">
+                            <hc:SimplePanel x:Name="Bg" SnapsToDevicePixels="true">
                                 <Border Background="{TemplateBinding Background}" />
                                 <Track x:Name="PART_Track" IsEnabled="{TemplateBinding IsMouseOver}">
                                     <Track.DecreaseRepeatButton>
@@ -196,7 +195,7 @@
                                         <Thumb Background="{TemplateBinding Foreground}" Style="{StaticResource ScrollBarBaseThumbHorizontal}"/>
                                     </Track.Thumb>
                                 </Track>
-                            </controls:SimplePanel>
+                            </hc:SimplePanel>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
@@ -206,7 +205,7 @@
 
     <ControlTemplate x:Key="ScrollViewerNativeBaseControlTemplate" TargetType="ScrollViewer">
         <ControlTemplate.Resources>
-            <Storyboard x:Key="Storyboard1">
+            <Storyboard x:Key="StoryboardMouseOver">
                 <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="PART_VerticalScrollBar">
                     <EasingDoubleKeyFrame KeyTime="0:0:.1" Value=".8"/>
                 </DoubleAnimationUsingKeyFrames>
@@ -214,7 +213,52 @@
                     <EasingDoubleKeyFrame KeyTime="0:0:.1" Value=".8"/>
                 </DoubleAnimationUsingKeyFrames>
             </Storyboard>
-            <Storyboard x:Key="Storyboard2">
+            <Storyboard x:Key="StoryboardCommon">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="PART_VerticalScrollBar">
+                    <EasingDoubleKeyFrame KeyTime="0:0:.2" Value=".3"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="PART_HorizontalScrollBar">
+                    <EasingDoubleKeyFrame KeyTime="0:0:.2" Value=".3"/>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </ControlTemplate.Resources>
+        <Grid x:Name="Grid" Background="{TemplateBinding Background}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <ScrollContentPresenter x:Name="PART_ScrollContentPresenter" Grid.RowSpan="2" Grid.ColumnSpan="2" CanContentScroll="{TemplateBinding CanContentScroll}" CanHorizontallyScroll="False" CanVerticallyScroll="False" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Grid.Column="0" Margin="{TemplateBinding Padding}" Grid.Row="0"/>
+            <ScrollBar x:Name="PART_VerticalScrollBar" Opacity=".3" Style="{StaticResource ScrollBarBaseStyle}" AutomationProperties.AutomationId="VerticalScrollBar" Cursor="Arrow" Grid.Column="1" Maximum="{TemplateBinding ScrollableHeight}" Minimum="0" Grid.Row="0" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportHeight}"/>
+            <ScrollBar x:Name="PART_HorizontalScrollBar"  Opacity=".3" Style="{StaticResource ScrollBarBaseStyle}" AutomationProperties.AutomationId="HorizontalScrollBar" Cursor="Arrow" Grid.Column="0" Maximum="{TemplateBinding ScrollableWidth}" Minimum="0" Orientation="Horizontal" Grid.Row="1" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportWidth}"/>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Trigger.EnterActions>
+                    <BeginStoryboard Storyboard="{StaticResource StoryboardMouseOver}"/>
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                    <BeginStoryboard Storyboard="{StaticResource StoryboardCommon}"/>
+                </Trigger.ExitActions>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+
+    <ControlTemplate x:Key="ScrollViewerNativeAutoHideBaseControlTemplate" TargetType="ScrollViewer">
+        <ControlTemplate.Resources>
+            <Storyboard x:Key="StoryboardMouseOver">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="PART_VerticalScrollBar">
+                    <EasingDoubleKeyFrame KeyTime="0:0:.1" Value=".8"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="PART_HorizontalScrollBar">
+                    <EasingDoubleKeyFrame KeyTime="0:0:.1" Value=".8"/>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+            <Storyboard x:Key="StoryboardCommon">
                 <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="PART_VerticalScrollBar">
                     <EasingDoubleKeyFrame KeyTime="0:0:.2" Value="0"/>
                 </DoubleAnimationUsingKeyFrames>
@@ -237,26 +281,31 @@
             <ScrollBar x:Name="PART_HorizontalScrollBar" Opacity="0" Style="{StaticResource ScrollBarBaseStyle}" AutomationProperties.AutomationId="HorizontalScrollBar" Cursor="Arrow" Grid.Column="0" Maximum="{TemplateBinding ScrollableWidth}" Minimum="0" Orientation="Horizontal" Grid.Row="1" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportWidth}"/>
         </Grid>
         <ControlTemplate.Triggers>
-            <DataTrigger Binding="{Binding IsMouseOver,RelativeSource={RelativeSource Self}}" Value="True">
-                <DataTrigger.EnterActions>
-                    <BeginStoryboard Storyboard="{StaticResource Storyboard1}"/>
-                </DataTrigger.EnterActions>
-                <DataTrigger.ExitActions>
-                    <BeginStoryboard Storyboard="{StaticResource Storyboard2}"/>
-                </DataTrigger.ExitActions>
-            </DataTrigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Trigger.EnterActions>
+                    <BeginStoryboard Storyboard="{StaticResource StoryboardMouseOver}"/>
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                    <BeginStoryboard Storyboard="{StaticResource StoryboardCommon}"/>
+                </Trigger.ExitActions>
+            </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
     <Style x:Key="ScrollViewerNativeBaseStyle" TargetType="ScrollViewer">
-        <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="VerticalScrollBarVisibility" Value="{Binding Path=(hc:ScrollViewer.VerticalScrollBarVisibility),RelativeSource={RelativeSource TemplatedParent}}"/>
         <Setter Property="Focusable" Value="False"/>
-        <Setter Property="Template" Value="{StaticResource ScrollViewerNativeBaseControlTemplate}"/>
+        <Setter Property="Template" Value="{StaticResource ScrollViewerNativeAutoHideBaseControlTemplate}"/>
+        <Style.Triggers>
+            <Trigger Property="hc:ScrollViewerAttach.AutoHide" Value="False">
+                <Setter Property="Template" Value="{StaticResource ScrollViewerNativeBaseControlTemplate}"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
-    <ControlTemplate x:Key="ScrollViewerBaseControlTemplate" TargetType="controls:ScrollViewer">
+    <ControlTemplate x:Key="ScrollViewerBaseControlTemplate" TargetType="hc:ScrollViewer">
         <ControlTemplate.Resources>
-            <Storyboard x:Key="Storyboard1">
+            <Storyboard x:Key="StoryboardMouseOver">
                 <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="PART_VerticalScrollBar">
                     <EasingDoubleKeyFrame KeyTime="0:0:.1" Value=".8"/>
                 </DoubleAnimationUsingKeyFrames>
@@ -264,7 +313,51 @@
                     <EasingDoubleKeyFrame KeyTime="0:0:.1" Value=".8"/>
                 </DoubleAnimationUsingKeyFrames>
             </Storyboard>
-            <Storyboard x:Key="Storyboard2">
+            <Storyboard x:Key="StoryboardCommon">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="PART_VerticalScrollBar">
+                    <EasingDoubleKeyFrame KeyTime="0:0:.2" Value=".3"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="PART_HorizontalScrollBar">
+                    <EasingDoubleKeyFrame KeyTime="0:0:.2" Value=".3"/>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </ControlTemplate.Resources>
+        <Grid x:Name="Grid" Background="{TemplateBinding Background}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <ScrollContentPresenter x:Name="PART_ScrollContentPresenter" Grid.RowSpan="2" Grid.ColumnSpan="2" CanContentScroll="{TemplateBinding CanContentScroll}" CanHorizontallyScroll="False" CanVerticallyScroll="False" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Grid.Column="0" Margin="{TemplateBinding Padding}" Grid.Row="0"/>
+            <ScrollBar x:Name="PART_VerticalScrollBar" Style="{StaticResource ScrollBarBaseStyle}" AutomationProperties.AutomationId="VerticalScrollBar" Cursor="Arrow" Grid.Column="1" Maximum="{TemplateBinding ScrollableHeight}" Minimum="0" Grid.Row="0" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportHeight}"/>
+            <ScrollBar x:Name="PART_HorizontalScrollBar" Style="{StaticResource ScrollBarBaseStyle}" AutomationProperties.AutomationId="HorizontalScrollBar" Cursor="Arrow" Grid.Column="0" Maximum="{TemplateBinding ScrollableWidth}" Minimum="0" Orientation="Horizontal" Grid.Row="1" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportWidth}"/>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Trigger.EnterActions>
+                    <BeginStoryboard Storyboard="{StaticResource StoryboardMouseOver}"/>
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                    <BeginStoryboard Storyboard="{StaticResource StoryboardCommon}"/>
+                </Trigger.ExitActions>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="ScrollViewerAutoHideBaseControlTemplate" TargetType="hc:ScrollViewer">
+        <ControlTemplate.Resources>
+            <Storyboard x:Key="StoryboardMouseOver">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="PART_VerticalScrollBar">
+                    <EasingDoubleKeyFrame KeyTime="0:0:.1" Value=".8"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="PART_HorizontalScrollBar">
+                    <EasingDoubleKeyFrame KeyTime="0:0:.1" Value=".8"/>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+            <Storyboard x:Key="StoryboardCommon">
                 <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="PART_VerticalScrollBar">
                     <EasingDoubleKeyFrame KeyTime="0:0:.2" Value="0"/>
                 </DoubleAnimationUsingKeyFrames>
@@ -287,21 +380,26 @@
             <ScrollBar x:Name="PART_HorizontalScrollBar" Opacity="0" Style="{StaticResource ScrollBarBaseStyle}" AutomationProperties.AutomationId="HorizontalScrollBar" Cursor="Arrow" Grid.Column="0" Maximum="{TemplateBinding ScrollableWidth}" Minimum="0" Orientation="Horizontal" Grid.Row="1" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportWidth}"/>
         </Grid>
         <ControlTemplate.Triggers>
-            <DataTrigger Binding="{Binding IsMouseOver,RelativeSource={RelativeSource Self}}" Value="True">
-                <DataTrigger.EnterActions>
-                    <BeginStoryboard Storyboard="{StaticResource Storyboard1}"/>
-                </DataTrigger.EnterActions>
-                <DataTrigger.ExitActions>
-                    <BeginStoryboard Storyboard="{StaticResource Storyboard2}"/>
-                </DataTrigger.ExitActions>
-            </DataTrigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Trigger.EnterActions>
+                    <BeginStoryboard Storyboard="{StaticResource StoryboardMouseOver}"/>
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                    <BeginStoryboard Storyboard="{StaticResource StoryboardCommon}"/>
+                </Trigger.ExitActions>
+            </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
-    
-    <Style x:Key="ScrollViewerBaseStyle" TargetType="controls:ScrollViewer">
-        <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+
+    <Style x:Key="ScrollViewerBaseStyle" TargetType="hc:ScrollViewer">
+        <Setter Property="VerticalScrollBarVisibility" Value="{Binding Path=(hc:ScrollViewer.VerticalScrollBarVisibility),RelativeSource={RelativeSource TemplatedParent}}" />
         <Setter Property="Focusable" Value="False"/>
-        <Setter Property="Template" Value="{StaticResource ScrollViewerBaseControlTemplate}"/>
+        <Setter Property="Template" Value="{StaticResource ScrollViewerAutoHideBaseControlTemplate}"/>
+        <Style.Triggers>
+            <Trigger Property="hc:ScrollViewerAttach.AutoHide" Value="False">
+                <Setter Property="Template" Value="{StaticResource ScrollViewerBaseControlTemplate}"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
 </ResourceDictionary>

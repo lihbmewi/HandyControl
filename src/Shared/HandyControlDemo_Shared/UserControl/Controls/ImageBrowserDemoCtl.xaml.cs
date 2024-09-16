@@ -1,11 +1,17 @@
 ﻿
-namespace HandyControlDemo.UserControl
+using System;
+
+namespace HandyControlDemo.UserControl;
+
+public partial class ImageBrowserDemoCtl : IDisposable
 {
-    public partial class ImageBrowserDemoCtl
+    public ImageBrowserDemoCtl()
     {
-        public ImageBrowserDemoCtl()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
+
+    public void Dispose()
+    {
+        ImageViewerDemo.Dispose();
     }
 }

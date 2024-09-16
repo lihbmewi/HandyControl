@@ -1,9 +1,8 @@
-﻿namespace HandyControl.Data
-{
-    public class HandyControlConfig
-    {
-        public SystemVersionInfo SystemVersionInfo { get; set; }
+﻿namespace HandyControl.Data;
 
-        public string Lang { get; set; }
-    }
+public class HandyControlConfig
+{
+    public string Lang { get; set; }
+
+    public int TimelineFrameRate { get; set; } = 60;
 }

@@ -1,6 +1,9 @@
 ﻿.vs
+.config
+.idea
 *.user
-*.xml
 [Bb]in/
 [Oo]bj/
 packages/
+build/outputs
+build/tools
